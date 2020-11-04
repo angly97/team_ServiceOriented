@@ -11,6 +11,10 @@ def hello_world():
 def hello_world():
     return 'test'
 
+@app.route('/pushTest')
+def hello_world():
+    return 'pushTest'
+
 @app.route("/index")
 def get_html():
     return render_template('index.html')
