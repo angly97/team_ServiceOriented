@@ -396,7 +396,7 @@ h1, h2, h3, h4, h5, h6 {
 #hero {
   width: 100%;
   height: 100vh;
-  background: url("../img/hero-bg.jpg") top center;
+  background: url("../img/theater-bg.jpg") top center;
   background-size: cover;
   position: relative;
 }
@@ -565,6 +565,7 @@ section {
 .about .content p:last-child {
   margin-bottom: 0;
 }
+
 
 /*--------------------------------------------------------------
 # Clients
@@ -908,7 +909,7 @@ section {
   padding: 15px 0 0 0;
   margin: 0 0 0 50px;
   font-family: "Raleway", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   color: #3b3b3b;
 }
 
@@ -917,7 +918,7 @@ section {
   display: block;
   margin-top: 20px;
   color: #3b3b3b;
-  font-size: 15px;
+  font-size: 23px;
   font-family: "Poppins", sans-serif;
   transition: ease-in-out 0.3s;
 }
@@ -927,7 +928,7 @@ section {
 }
 
 .counts .image {
-  background: url("../img/counts-img.jpg") center center no-repeat;
+  background: url("../img/RestAPI.png") center center no-repeat;
   background-size: cover;
   min-height: 400px;
 }
