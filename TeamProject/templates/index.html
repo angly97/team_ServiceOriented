@@ -396,13 +396,13 @@
               <tr>
                 <td class="tg-73oq">영화 검색</td>
                 <td class="tg-73oq">GET</td>
-                <td class="tg-73oq">http://127.0.0.1:5000/moviesearch/movieinfo</td>
+                <td class="tg-73oq">http://15.165.160.58:5000/moviesearch/movieinfo</td>
                 <td class="tg-73oq">JSON</td>
               </tr>
               <tr>
                 <td class="tg-73oq">현재 위치 주변 영화관 및 박스오피스 검색</td>
                 <td class="tg-73oq">GET</td>
-                <td class="tg-73oq">http://127.0.0.1:5000/moviesearch/cineinfo</td>
+                <td class="tg-73oq">http://15.165.160.58:5000/moviesearch/cineinfo</td>
                 <td class="tg-73oq">JSON</td>
               </tr>
             </tbody>
@@ -434,7 +434,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("검색할 영화제목")<br> <br>url = "http://127.0.0.1:5000/moviesearch/movieinfo?listNum=2&amp;movieNm=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
+                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("검색할 영화제목")<br> <br>url = "http://15.165.160.58:5000/moviesearch/movieinfo?listNum=2&amp;movieNm=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
               </tr>
             </thead>
             </table>
@@ -456,7 +456,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("사용자 ip")<br> <br>url = "http://127.0.0.1:5000/moviesearch/cineinfo?listNum=2&amp;ip=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
+                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("사용자 ip")<br> <br>url = "http://15.165.160.58:5000/moviesearch/cineinfo?listNum=2&amp;ip=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
               </tr>
             </thead>
             </table>
@@ -1085,7 +1085,7 @@
           <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
             <div class="member" data-aos="fade-up" data-aos-delay="100">
               <div class="member-img">
-                <img src="/static/assets/img/team/team-1.jpg" class="img-fluid" alt="">
+                <img src="/static/assets/img/1.png" class="img-fluid" alt="">
 {#                <div class="social">#}
 {#                  <a href=""><i class="icofont-twitter"></i></a>#}
 {#                  <a href=""><i class="icofont-facebook"></i></a>#}
@@ -1096,6 +1096,7 @@
               <div class="member-info">
                 <h4>우소연 </h4>
                 <span>2016136081</span>
+                  <span>wsy4533@naver.com</span>
               </div>
             </div>
           </div>
@@ -1103,7 +1104,7 @@
           <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
             <div class="member" data-aos="fade-up" data-aos-delay="200">
               <div class="member-img">
-                <img src="/static/assets/img/team/team-2.jpg" class="img-fluid" alt="">
+                <img src="/static/assets/img/2.png" class="img-fluid" alt="">
 {#                <div class="social">#}
 {#                  <a href=""><i class="icofont-twitter"></i></a>#}
 {#                  <a href=""><i class="icofont-facebook"></i></a>#}
@@ -1114,6 +1115,7 @@
               <div class="member-info">
                 <h4>민초현 </h4>
                 <span>2017136041</span>
+                  <span>angly97@naver.com</span>
               </div>
             </div>
           </div>
@@ -1121,7 +1123,7 @@
           <div class="col-lg-3 col-md-6 d-flex align-items-stretch">
             <div class="member" data-aos="fade-up" data-aos-delay="300">
               <div class="member-img">
-                <img src="/static/assets/img/team/team-3.jpg" class="img-fluid" alt="">
+                <img src="/static/assets/img/3.png" class="img-fluid" alt="">
 {#                <div class="social">#}
 {#                  <a href=""><i class="icofont-twitter"></i></a>#}
 {#                  <a href=""><i class="icofont-facebook"></i></a>#}
@@ -1132,6 +1134,7 @@
               <div class="member-info">
                 <h4>정소진 </h4>
                 <span>2017136111</span>
+                  <span>sojinj1@koreatech.ac.kr</span>
               </div>
             </div>
           </div>

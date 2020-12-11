@@ -7,14 +7,14 @@ import datetime
 import requests
 from urllib.request import urlopen
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
+import bcrypt
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()  # (app)
 db.init_app(app)
-bcrypt = Bcrypt(app)
 
 ########## Homepage ############
 class User(db.Model):
@@ -69,19 +69,18 @@ def login():
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['username']
-        try:
-            data = User.query.filter_by(username=name).first()
-            if data is not None:
-                new_user = User(username=request.form['username'], password=request.form['password'], email=request.form['email'])
+        username = request.form['username']
+        #password = request.form['password']
+        hashed_password = bcrypt.hashpw((request.form['password']).encode('utf-8'), bcrypt.gensalt())
+        email = request.form['email']
 
-            db.session.add(new_user)
-            db.session.commit()
-            return render_template('login.html')
-        except:
-            return 'There is a problem with ID or password. Please try again.'
+        #hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        new_user = User(username=username, password=hashed_password, email=email)
+
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('login.html')
     return render_template('register.html')
-
 
 @app.route("/logout")
 def logout():
@@ -250,4 +249,4 @@ def get_cineinfo():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="127.0.0.1", port="5000", debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
