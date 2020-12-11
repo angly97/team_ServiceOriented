@@ -53,13 +53,13 @@ def login():
         passw = request.form['password']
 
         try:
-            data = User.query.filter_by(username=name, password=passw).first
+            data = User.query.filter_by(username=name, password=passw).first()
             if data is not None:  # ID == name and PW == passw
                 session['logged_in'] = True
                 session['username'] = name
                 return redirect(url_for('main'))
             else:
-                return 'Dont Login'
+                return 'Please register first'
         except:
             return 'Dont Login'
     else:
@@ -69,12 +69,17 @@ def login():
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        new_user = User(username=request.form['username'], password=request.form['password'],
-                        email=request.form['email'])
+        name = request.form['username']
+        try:
+            data = User.query.filter_by(username=name).first()
+            if data is not None:
+                new_user = User(username=request.form['username'], password=request.form['password'], email=request.form['email'])
 
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template('login.html')
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('login.html')
+        except:
+            return 'There is a problem with ID or password. Please try again.'
     return render_template('register.html')
 
 
@@ -245,4 +250,4 @@ def get_cineinfo():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(host="127.0.0.1", port="5000", debug=True)
