@@ -9,24 +9,26 @@ from urllib.request import urlopen
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()  # (app)
 db.init_app(app)
 
+
 ########## Homepage ############
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(80))
-    email = db.Column(db.String(80), unique=True)
+    email = db.Column(db.String(80))
+    apiKey = db.Column(db.String(150))
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, password, email, apiKey):
         self.username = username
         self.password = password
         self.email = email
+        self.apiKey = apiKey
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -69,18 +71,24 @@ def login():
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        #password = request.form['password']
-        hashed_password = bcrypt.hashpw((request.form['password']).encode('utf-8'), bcrypt.gensalt())
-        email = request.form['email']
+        name = request.form['username']
+        password = request.form['password']
+        try:
+            data = User.query.filter_by(username=name)
+            if data is not None:
+                hashed_password = bcrypt.hashpw((request.form['password']).encode('utf-8'), bcrypt.gensalt())
+                # hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                new_user = User(username=name, password=password, apiKey=hashed_password, email=request.form['email'])
 
-        #hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        new_user = User(username=username, password=hashed_password, email=email)
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('login.html')
 
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template('login.html')
+        except:
+            return 'This ID already exists. Please try again'
+
     return render_template('register.html')
+
 
 @app.route("/logout")
 def logout():
@@ -139,6 +147,7 @@ def get_movieinfo():
 
     except Exception as e:
         return {'error': str(e)}
+
 
 @app.route("/moviesearch/cineinfo")
 def get_cineinfo():
@@ -232,7 +241,7 @@ def get_cineinfo():
             for i in rank_data["boxOfficeResult"]["dailyBoxOfficeList"]:
                 del i["rnum"], i["rankInten"], i["rankOldAndNew"], i["movieCd"], i["salesAmt"], i["salesShare"], i[
                     "salesInten"], i["salesChange"], i["salesAcc"], i["audiCnt"], i["audiInten"], i["audiChange"], \
-                i["showCnt"], i["scrnCnt"]
+                    i["showCnt"], i["scrnCnt"]
 
             dict_result = {'cinePosition': place_data, 'boxOfficeRank': rank_data["boxOfficeResult"]}
 
@@ -249,4 +258,4 @@ def get_cineinfo():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(host="127.0.0.1", port="5000", debug=True)

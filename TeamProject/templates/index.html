@@ -851,6 +851,7 @@
                 {%  else  %}
                 <center><div>
                     {{ session['username'] }} 님 반갑습니다.<br><br>
+                    <p> key : {{ session['apiKey'] }}</p>
                     <a href="/logout">Logout</a>
                 </div></center>
                 {% endif %}
