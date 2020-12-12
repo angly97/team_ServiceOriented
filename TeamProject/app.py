@@ -1,6 +1,7 @@
 from flask import Flask, request, session, render_template, redirect, url_for, make_response
 from flask_restful import reqparse
 import urllib.request
+
 import setting
 import json
 import datetime
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()  # (app)
 db.init_app(app)
+
 
 
 ########## Homepage ############
@@ -30,15 +32,18 @@ class User(db.Model):
         self.email = email
         self.apiKey = apiKey
 
-
 @app.route('/', methods=['GET', 'POST'])
 def main():
+
     if not session.get('logged_in'):
+
         return render_template('index.html')
     else:
         if request.method == 'POST':
             username = request.form['username']
+
             return render_template('index.html')
+        session['apiKey'] = User.query.filter(User.username == session['username']).first().apiKey
         return render_template('index.html')
 
 
@@ -54,11 +59,13 @@ def login():
         name = request.form['username']
         passw = request.form['password']
 
+
         try:
             data = User.query.filter_by(username=name, password=passw).first()
             if data is not None:  # ID == name and PW == passw
                 session['logged_in'] = True
                 session['username'] = name
+
                 return redirect(url_for('main'))
             else:
                 return 'Please register first'
@@ -73,6 +80,7 @@ def register():
     if request.method == 'POST':
         name = request.form['username']
         password = request.form['password']
+
         try:
             data = User.query.filter_by(username=name)
             if data is not None:
@@ -110,40 +118,51 @@ def get_movieinfo():
         # kobis - list
 
         parser = reqparse.RequestParser()
+        parser.add_argument('key', required=True, type=str, help='key cannot be blank')
         parser.add_argument('movieNm', required=True, type=str, help='movieNm cannot be blank')
         parser.add_argument('listNum', required=False, type=str, help='listNum can be blank')
         args = parser.parse_args()
 
-        movieNm = urllib.parse.quote(args['movieNm'])
-        listNum = ""
+        key = urllib.parse.quote(args['key'])
 
-        if args['listNum'] != None:
-            listNum = urllib.parse.quote(args['listNum'])
+        data = User.query.filter(User.apiKey == key)
+        print(data)
+
+        if data is not None:
+
+            movieNm = urllib.parse.quote(args['movieNm'])
+            listNum = ""
+
+            if args['listNum'] != None:
+                listNum = urllib.parse.quote(args['listNum'])
+
+            else:
+                listNum = "10"
+
+            list_url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?itemPerPage=" + listNum + "&key=" + kobis_key + "&movieNm=" + movieNm
+
+            res = urllib.request.Request(list_url)
+
+            response = urllib.request.urlopen(res)
+            rescode = response.getcode()
+
+            if (rescode == 200):
+                response_body = response.read()
+                movielist = response_body.decode('utf-8')
+
+                list_data = json.loads(movielist)
+
+                for i in list_data["movieListResult"]["movieList"]:
+                    del i["movieCd"], i["movieNmEn"], i["prdtStatNm"], i["prdtYear"], i["repGenreNm"], i["typeNm"]
+
+                json_result = json.dumps(list_data, ensure_ascii=False, indent=4, sort_keys=True)
+
+                result = make_response(json_result)
+
+            return result
 
         else:
-            listNum = "10"
-
-        list_url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json?itemPerPage=" + listNum + "&key=" + kobis_key + "&movieNm=" + movieNm
-
-        res = urllib.request.Request(list_url)
-
-        response = urllib.request.urlopen(res)
-        rescode = response.getcode()
-
-        if (rescode == 200):
-            response_body = response.read()
-            movielist = response_body.decode('utf-8')
-
-            list_data = json.loads(movielist)
-
-            for i in list_data["movieListResult"]["movieList"]:
-                del i["movieCd"], i["movieNmEn"], i["prdtStatNm"], i["prdtYear"], i["repGenreNm"], i["typeNm"]
-
-            json_result = json.dumps(list_data, ensure_ascii=False, indent=4, sort_keys=True)
-
-            result = make_response(json_result)
-
-        return result
+            return 'Unauthorized'
 
     except Exception as e:
         return {'error': str(e)}
