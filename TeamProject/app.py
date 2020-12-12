@@ -9,13 +9,14 @@ import requests
 from urllib.request import urlopen
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
+import re
+import sqlite3
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()  # (app)
 db.init_app(app)
-
 
 
 ########## Homepage ############
@@ -32,9 +33,9 @@ class User(db.Model):
         self.email = email
         self.apiKey = apiKey
 
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
-
     if not session.get('logged_in'):
 
         return render_template('index.html')
@@ -58,7 +59,6 @@ def login():
 
         name = request.form['username']
         passw = request.form['password']
-
 
         try:
             data = User.query.filter_by(username=name, password=passw).first()
@@ -85,7 +85,10 @@ def register():
             data = User.query.filter_by(username=name)
             if data is not None:
                 hashed_password = bcrypt.hashpw((request.form['password']).encode('utf-8'), bcrypt.gensalt())
-                # hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                hashed_password = hashed_password.decode()
+                hashed_password = re.sub('[-=.#/?:$}]', '', hashed_password)
+                hashed_password = hashed_password[:15]
+                print(hashed_password)
                 new_user = User(username=name, password=password, apiKey=hashed_password, email=request.form['email'])
 
             db.session.add(new_user)
@@ -125,7 +128,11 @@ def get_movieinfo():
 
         key = urllib.parse.quote(args['key'])
 
-        data = User.query.filter(User.apiKey == key)
+        conn = sqlite3.connect('test.db')
+        c = conn.cursor()
+        t = (key,)
+        c.execute("SELECT id FROM user WHERE apiKey=?", t)
+        data = c.fetchone()
         print(data)
 
         if data is not None:
@@ -199,76 +206,88 @@ def get_cineinfo():
         lon = 0.0
 
         parser = reqparse.RequestParser()
+        parser.add_argument('key', required=True, type=str, help='key cannot be blank')
         parser.add_argument('ip', required=True, type=str, help='ip cannot be blank')
         parser.add_argument('listNum', required=False, type=int, help='listNum can be blank')
         args = parser.parse_args()
+        key = urllib.parse.quote(args['key'])
 
-        if (args['listNum'] == None):
-            args['listNum'] = 15
-        query_request = "https://geolocation-db.com/json/%s" % args['ip']
+        conn = sqlite3.connect('test.db')
+        c = conn.cursor()
+        t = (key,)
+        c.execute("SELECT id FROM user WHERE apiKey=?", t)
+        data = c.fetchone()
+        print(data)
 
-        with urlopen(query_request) as url:
-            data = json.loads(url.read().decode())
-            # print(data)
-            lat = float(data["latitude"])
-            lon = float(data["longitude"])
+        if data is not None:
+            if (args['listNum'] == None):
+                args['listNum'] = 15
+            query_request = "https://geolocation-db.com/json/%s" % args['ip']
 
-        searching = '영화관'
-        url = 'https://dapi.kakao.com/v2/local/search/keyword.json?y=' + str(lat) + '&x=' + str(
-            lon) + '&size=' + str(args['listNum']) + '&radius=20000&query={}'.format(searching)
-        headers = {
-            "Authorization": kakao_key
-        }
-        places = requests.get(url, headers=headers).json()['documents']
+            with urlopen(query_request) as url:
+                data = json.loads(url.read().decode())
+                # print(data)
+                lat = float(data["latitude"])
+                lon = float(data["longitude"])
 
-        place_list = []
-        for i in places:
-            i['distance'] = int(i['distance'])
-            del i['category_group_code'], i['category_group_name'], i['category_name'], i['id'], i['x'], i[
-                'y']
-            place_list.append(i)
+            searching = '영화관'
+            url = 'https://dapi.kakao.com/v2/local/search/keyword.json?y=' + str(lat) + '&x=' + str(
+                lon) + '&size=' + str(args['listNum']) + '&radius=20000&query={}'.format(searching)
+            headers = {
+                "Authorization": kakao_key
+            }
+            places = requests.get(url, headers=headers).json()['documents']
 
-        place_list.sort(key=lambda x: x['distance'])
+            place_list = []
+            for i in places:
+                i['distance'] = int(i['distance'])
+                del i['category_group_code'], i['category_group_name'], i['category_name'], i['id'], i['x'], i[
+                    'y']
+                place_list.append(i)
 
-        place_data = {'placeList': place_list}
+            place_list.sort(key=lambda x: x['distance'])
 
-        # /moviesearch?ip=211.106.150.88&movieNm=하모니
+            place_data = {'placeList': place_list}
 
-        # kobis - ranking
-        today = datetime.datetime.now()  # 오늘날짜
-        delta = datetime.timedelta(days=-1)  # 하루 전을 의미하는 timedelta객체
-        yesterday = today + delta  # 오늘 날짜와 timedelta 연산
-        yesterday_str = yesterday.strftime("%Y%m%d")  # yyyymmdd 형식 문자열로 변환
+            # /moviesearch?ip=211.106.150.88&movieNm=하모니
 
-        for i in places:
-            place_tmp = i["address_name"].split()
+            # kobis - ranking
+            today = datetime.datetime.now()  # 오늘날짜
+            delta = datetime.timedelta(days=-1)  # 하루 전을 의미하는 timedelta객체
+            yesterday = today + delta  # 오늘 날짜와 timedelta 연산
+            yesterday_str = yesterday.strftime("%Y%m%d")  # yyyymmdd 형식 문자열로 변환
 
-        placeNm = places_detail[place_tmp[0]]
+            for i in places:
+                place_tmp = i["address_name"].split()
 
-        rank_url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?itemPerPage=5&key=" + kobis_key + "&targetDt=" + yesterday_str + "&wideAreaCd=" + placeNm
+            placeNm = places_detail[place_tmp[0]]
 
-        req = urllib.request.Request(rank_url)
-        response = urllib.request.urlopen(req)
-        rescode = response.getcode()
+            rank_url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?itemPerPage=5&key=" + kobis_key + "&targetDt=" + yesterday_str + "&wideAreaCd=" + placeNm
 
-        if (rescode == 200):
-            response_body = response.read()
-            ranking = response_body.decode('utf-8')
+            req = urllib.request.Request(rank_url)
+            response = urllib.request.urlopen(req)
+            rescode = response.getcode()
 
-            rank_data = json.loads(ranking)
+            if (rescode == 200):
+                response_body = response.read()
+                ranking = response_body.decode('utf-8')
 
-            for i in rank_data["boxOfficeResult"]["dailyBoxOfficeList"]:
-                del i["rnum"], i["rankInten"], i["rankOldAndNew"], i["movieCd"], i["salesAmt"], i["salesShare"], i[
-                    "salesInten"], i["salesChange"], i["salesAcc"], i["audiCnt"], i["audiInten"], i["audiChange"], \
-                    i["showCnt"], i["scrnCnt"]
+                rank_data = json.loads(ranking)
 
-            dict_result = {'cinePosition': place_data, 'boxOfficeRank': rank_data["boxOfficeResult"]}
+                for i in rank_data["boxOfficeResult"]["dailyBoxOfficeList"]:
+                    del i["rnum"], i["rankInten"], i["rankOldAndNew"], i["movieCd"], i["salesAmt"], i["salesShare"], i[
+                        "salesInten"], i["salesChange"], i["salesAcc"], i["audiCnt"], i["audiInten"], i["audiChange"], \
+                        i["showCnt"], i["scrnCnt"]
 
-            json_result = json.dumps(dict_result, ensure_ascii=False, indent=4, sort_keys=True)
+                dict_result = {'cinePosition': place_data, 'boxOfficeRank': rank_data["boxOfficeResult"]}
 
-            result = make_response(json_result)
+                json_result = json.dumps(dict_result, ensure_ascii=False, indent=4, sort_keys=True)
 
-        return result
+                result = make_response(json_result)
+
+            return result
+        else:
+            return 'Unauthorized'
 
     except Exception as e:
         return {'error': str(e)}
@@ -277,4 +296,4 @@ def get_cineinfo():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(host="127.0.0.1", port="5000", debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)

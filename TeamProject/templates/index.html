@@ -434,7 +434,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("검색할 영화제목")<br> <br>url = "http://15.165.160.58:5000/moviesearch/movieinfo?listNum=2&amp;movieNm=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
+                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("검색할 영화제목")<br> <br>url = "http://15.165.160.58:5000/moviesearch/movieinfo?key=[발급받은 키]&listNum=2&amp;movieNm=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
               </tr>
             </thead>
             </table>
@@ -456,7 +456,7 @@
             </colgroup>
             <thead>
               <tr>
-                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("사용자 ip")<br> <br>url = "http://15.165.160.58:5000/moviesearch/cineinfo?listNum=2&amp;ip=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
+                <th class="tg-0lax">import os<br>import sys<br>import urllib.request<br> <br>encText = urllib.parse.quote("사용자 ip")<br> <br>url = "http://15.165.160.58:5000/moviesearch/cineinfo?key=[발급받은 키]&listNum=2&amp;ip=" + encText<br> <br>request = urllib.request.Request(url)<br> <br>response = urllib.request.urlopen(request)<br>rescode = response.getcode()<br> <br>if(rescode==200):<br>    response_body = response.read()<br>    print(response_body.decode('utf-8'))<br>else:<br>    print("Error Code:" + rescode)</th>
               </tr>
             </thead>
             </table>
@@ -747,7 +747,7 @@
               <tr>
                 <td class="tg-73oq">listNum</td>
                 <td class="tg-73oq">N</td>
-                <td class="tg-73oq">in</td>
+                <td class="tg-73oq">int</td>
                 <td class="tg-73oq">출력되는 영화제목 row 개수를 지정합니다.(default : 15, 최대 : 15)</td>
               </tr>
             </tbody>
@@ -852,7 +852,7 @@
                 <center><div>
                     {{ session['username'] }} 님 반갑습니다.<br><br>
 
-                    <p> key : {{ session['apiKey'].decode()}}</p>
+                    <p> key : {{ session['apiKey']}}</p>
                     <a href="/logout">Logout</a>
                 </div></center>
                 {% endif %}
