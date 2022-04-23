@@ -1,52 +1,52 @@
 # :tv: 영화정보 검색 & 추천 API 
 
->  최신 영화 정보, 현재 인기 영화 목록, 주변 영화관 위치 검색 API
 
 
+## Description
 
-## 1. 개요
-
+* 최신 영화 정보, 현재 인기 영화 목록, 주변 영화관 위치 검색 API
 * 주제 선정 배경
   * 관심있는 영화에 대한 정보와 그 외 정보들을 방대한 양의 정보더미 속에서 찾아야하는 번거로음에 초점을 맞춤
 * 기능
   * 영화 검색: 원하는 영화에 대한 최신 정보 출력
   * 현재 인기 영화 추천
   * 현재 사용자 근처 영화관의 위치 
-* 구현 환경
-  * Flask
 
 
 
-## 2. 시연 & 설명 동영상
+## Requirement
 
-* https://www.youtube.com/watch?v=X9rkHPwlQlo
-
-
-
-## 3. Open API 목록
-
-* Geolocation API 
-  * 사용자의 현재 위치를 파악하기 위해 사용
-  * json 형식으로 반환
-* Kakao map API 
-  * 키워드로 장소 검색하는 기능을 통해  사용자의 현재 위치를 기준으로 반경 20km 내 영화관 위치 정보를 반환
-  * 결과 row 갯수는 사용자 지정
-* 일별 박스오피스 API 
-  * 특정 일자 상영작들의 박스오피스 정보를 사용자가 원하는 조건을 통해 조회
-  * 상영지역별로 조회하기 위해 지도 api를 통해 받아온 사용자의 위치를 통해 지역별 박스오피스 정보를 응답하도록 함
-* 영화 목록 API 
-  * 통합 전산망에서 사용되는 영화목록을 영화면, 감독명 등의 조건을 통해 조회
-  * 결과 row 갯수는 사용자 지정
+* Python 3 or higher
+* flask
 
 
 
-# 4. API 문서
+## Setup
+
+```bash
+# Install dependencies
+$ pip install -r ./requirements.txt –user
+```
+
+
+
+### Test
+
+```bash
+# run server
+FLASK_APP=app.py FLASK_DEBUG=1 flask run
+```
+
+
+
+## API Document
 
 * 영화 검색
 
   * 요청
 
     * URL
+
       |    API    | 메서드 |                    요청 URL                     | 출력 포맷 |
       | :-------: | :----: | :---------------------------------------------: | :-------: |
       | 영화 검색 |  GET   | http://15.165.160.58:5000/moviesearch/movieinfo |   JSON    |
@@ -71,7 +71,7 @@
     | nationAlt | str  |  제작국가를 출력한다.   |
     |  openDt   | str  |  개봉연도를 출력한다.   |
 
-  ​	
+    
 
 * 현재 위치 주변 영화관 및 박스오피스 검색 기능
 
