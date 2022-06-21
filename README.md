@@ -111,3 +111,31 @@ FLASK_APP=app.py FLASK_DEBUG=1 flask run
     |    phone     | str  |                 영화관 전화번호를 출력한다.                  |
     |  place_name  | str  |                     영화관명을 출력한다.                     |
     |  place_url   | str  |              영화관 상세페이지 url를 출력한다.               |
+    
+
+## 
+ * Micro Web Framwork
+   * Micro
+     * 가벼운 기능 제공
+     * 확장성 넓음
+   * Framwork
+     * 개발하는 프로젝트 구조, 라이브러리 모음 등 제공하는 개발 틀
+   * 간단한 웹 사이트/API 서버 만드는 데 특화된 파이썬 웹 프레임워크
+ * WSGI 프레임워크
+ * 요새는 클라우딩 컴퓨팅의 발달로 Docker, Kubernetes와 접목하여, 소규모 컨테이너 단위로 기능 개발 후, 한 번에 배포하는 방식 자주 사용
+ * 파이썬 인터프리터로 실행
+   * 실행이 빠르게 됨 ?
+ * MVC 패턴
+   * Model  = DB
+   * View = HTML
+   * Control = \_\_init__.py의 라우터 함수들
+ * 장점
+   * 가볍게 배울 수 있음(Python, HTML/CSS, Javascrip 만 배우면 가능)
+   * 가볍게 사용 가능
+     * 코드 몇 줄이면 금방 만듦
+     * Django 코드의 10%인 프레임워크
+   * 가볍게 배포 가능
+     *  virtualenv에 Flask 깔고 바로 배포 하면 됨
+ * 단점
+   * Django보다 자유도가 높아서 제공기능 적음
+   * 복잡한 애플리케이션 개발 시, 해야할 것 많음 
