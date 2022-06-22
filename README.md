@@ -113,7 +113,7 @@ FLASK_APP=app.py FLASK_DEBUG=1 flask run
     |  place_url   | str  |              영화관 상세페이지 url를 출력한다.               |
     
 
-## 
+## Flask
  * Micro Web Framwork
    * Micro
      * 가벼운 기능 제공
