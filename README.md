@@ -124,7 +124,6 @@ FLASK_APP=app.py FLASK_DEBUG=1 flask run
  * WSGI 프레임워크
  * 요새는 클라우딩 컴퓨팅의 발달로 Docker, Kubernetes와 접목하여, 소규모 컨테이너 단위로 기능 개발 후, 한 번에 배포하는 방식 자주 사용
  * 파이썬 인터프리터로 실행
-   * 실행이 빠르게 됨 ?
  * MVC 패턴
    * Model  = DB
    * View = HTML
