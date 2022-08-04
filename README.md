@@ -23,7 +23,7 @@
 
 ## Requirement
 
-* Python 3 or higher
+* Python 2.7 or higher
 * flask
 
 
