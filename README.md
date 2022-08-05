@@ -121,9 +121,6 @@ FLASK_APP=app.py FLASK_DEBUG=1 flask run
    * Framwork
      * 개발하는 프로젝트 구조, 라이브러리 모음 등 제공하는 개발 틀
    * 간단한 웹 사이트/API 서버 만드는 데 특화된 파이썬 웹 프레임워크
- * WSGI 프레임워크
- * 요새는 클라우딩 컴퓨팅의 발달로 Docker, Kubernetes와 접목하여, 소규모 컨테이너 단위로 기능 개발 후, 한 번에 배포하는 방식 자주 사용
- * 파이썬 인터프리터로 실행
  * MVC 패턴
    * Model  = DB
    * View = HTML
